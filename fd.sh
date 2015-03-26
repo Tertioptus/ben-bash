@@ -20,3 +20,6 @@ do
 	echo $i ${DIR}
 	((i++))
 done
+
+read filter
+echo $filter
