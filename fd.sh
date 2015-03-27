@@ -2,6 +2,7 @@
 
 args=("$@")
 DIRS=()
+FILTER=""
 
 function likeAncestry() {
 	DIRS+=(`pwd`)
@@ -14,15 +15,25 @@ function likeDescendants() {
 likeAncestry
 likeDescendants
 
-let i=1
-for DIR in ${DIRS[@]}
-do
-	if [["test" =~ *es*]]
-	 then
-		echo $i ${DIR}
-		((i++))
-	fi
-done
+while true; do
+	let i=1
+	for DIR in ${DIRS[@]}
+	do
 
-read filter
-echo $filter
+		echo $1
+		if [[ "${DIR}" =~ "*" ]]
+		 then
+			echo $i ${DIR}
+			((i++))
+		fi
+	done
+
+	if [[ i = 1 ]]
+		then
+			echo "blah"
+			break	
+	fi
+
+	read FILTER
+	echo $FILTER
+done
