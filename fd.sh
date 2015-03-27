@@ -17,8 +17,11 @@ likeDescendants
 let i=1
 for DIR in ${DIRS[@]}
 do
-	echo $i ${DIR}
-	((i++))
+	if [["test" =~ *es*]]
+	 then
+		echo $i ${DIR}
+		((i++))
+	fi
 done
 
 read filter
