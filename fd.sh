@@ -24,15 +24,16 @@ while true; do
 		 then
 			((i++))
 			echo $i ${DIR}
-			FILTERED_DIRS+=${DIR}
+			FILTERED_DIRS+=(${DIR})
 		fi
 	done
 
 	if [[ $i == 1 ]]
 		then
-			echo "blah"
+			cd ${FILTERED_DIRS[0]}
 			break	
 	fi
-	DIRS=FILTERED_DIRS
+	echo ${FILTERED_DIRS[@]}
+	DIRS=( "${FILTERED_DIRS[@]}" )
 	read FILTER
 done
