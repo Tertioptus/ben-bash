@@ -19,7 +19,7 @@ while true; do
 	let i=1
 	for DIR in ${DIRS[@]}
 	do
-		if [[ "${DIR}" =~ .*${FILTER}.* ]]
+		if [[ "${DIR}" =~ ${FILTER} ]]
 		 then
 			echo $i ${DIR}
 			((i++))
