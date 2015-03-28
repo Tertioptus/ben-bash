@@ -19,16 +19,14 @@ while true; do
 	let i=1
 	for DIR in ${DIRS[@]}
 	do
-
-		echo $1
-		if [[ "${DIR}" =~ "*" ]]
+		if [[ "${DIR}" =~ .*${FILTER}.* ]]
 		 then
 			echo $i ${DIR}
 			((i++))
 		fi
 	done
 
-	if [[ i = 1 ]]
+	if [[ $i == 2 ]]
 		then
 			echo "blah"
 			break	
