@@ -16,22 +16,23 @@ likeAncestry
 likeDescendants
 
 while true; do
-	let i=1
+	let i=0
+	FILTERED_DIRS=()
 	for DIR in ${DIRS[@]}
 	do
 		if [[ "${DIR}" =~ ${FILTER} ]]
 		 then
-			echo $i ${DIR}
 			((i++))
+			echo $i ${DIR}
+			FILTERED_DIRS+=${DIR}
 		fi
 	done
 
-	if [[ $i == 2 ]]
+	if [[ $i == 1 ]]
 		then
 			echo "blah"
 			break	
 	fi
-
+	DIRS=FILTERED_DIRS
 	read FILTER
-	echo $FILTER
 done
