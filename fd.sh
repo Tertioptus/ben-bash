@@ -33,7 +33,6 @@ while true; do
 			cd ${FILTERED_DIRS[0]}
 			break	
 	fi
-	echo ${FILTERED_DIRS[@]}
 	DIRS=( "${FILTERED_DIRS[@]}" )
 	read FILTER
 done
