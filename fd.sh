@@ -2,14 +2,14 @@
 
 args=("$@")
 DIRS=()
-FILTER=""
+FILTER=".*${args[0]}.*"
 
 function likeAncestry() {
 	DIRS+=(`pwd`)
 }
 
 function likeDescendants() {
-	DIRS+=(`find . -name "*${args[0]}*"`) 	
+	DIRS+=(`find . -regextype posix-extended -regex "${FILTER}"`) 	
 }
 
 likeAncestry
