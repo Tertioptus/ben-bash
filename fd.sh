@@ -30,7 +30,12 @@ while true; do
 
 	if [[ $i == 1 ]]
 		then
-			cd ${FILTERED_DIRS[0]}
+			if [[ -d ${FILTERED_DIRS[0]} ]]
+				then
+					cd ${FILTERED_DIRS[0]}
+				else
+					cd `dirname ${FILTERED_DIRS[0]}`
+			fi
 			break	
 	fi
 	DIRS=( "${FILTERED_DIRS[@]}" )
