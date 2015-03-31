@@ -15,7 +15,9 @@ function likeAncestry () {
 }
 
 function likeDescendants() {
+	IFS=$'\t\n'
 	DIRS+=(`find . -regextype posix-extended -regex "${FILTER}"`) 	
+	unset $IFS #or IFS=$' \t\n'
 }
 
 likeAncestry `pwd`
