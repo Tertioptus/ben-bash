@@ -23,14 +23,16 @@ likeDescendants
 
 while true; do
 	let i=0
+	LAST_DIRECTORY=""
 	FILTERED_DIRS=()
 	for DIR in ${DIRS[@]}
 	do
-		if [[ "${DIR}" =~ ${FILTER} ]]
-		 then
-			((i++))
+		if [[ "${DIR#${LAST_DIRECTORY}}" =~ ${FILTER} ]]
+			then
+			(( i++ ))
 			echo $i ${DIR}
 			FILTERED_DIRS+=(${DIR})
+			LAST_DIRECTORY=${DIR}
 		fi
 	done
 
