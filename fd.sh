@@ -29,15 +29,17 @@ while true; do
 	let i=0
 	LAST_DIRECTORY=""
 	FILTERED_DIRS=()
+	let current_directory_list_count=0
 	for DIR in ${DIRS[@]}
 	do
 		#Compare directory minus last recorded directory against
 		# filter to add only uniquely rooted file paths
 		shopt -s nocasematch
-		if [[ "${DIR#${LAST_DIRECTORY}}" =~ ${FILTER} ]]
+		(( current_directory_list_count++ ))
+		if [[ "${current_directory_list_count}: ${DIR#${LAST_DIRECTORY}}" =~ ${FILTER} ]]
 			then
 			(( i++ ))
-			echo $i ${DIR}
+			echo $i:  ${DIR}
 			FILTERED_DIRS+=(${DIR})
 			LAST_DIRECTORY=${DIR}
 		fi
