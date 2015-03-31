@@ -18,7 +18,7 @@ function likeDescendants() {
 	#Unset space as a delimiter, so that find returns paths with
 	# spaces in full.  Then reset that control after execution
 	IFS=$'\t\n'
-	DIRS+=(`find . -regextype posix-extended -regex "${FILTER}"`) 	
+	DIRS+=(`find . -regextype posix-extended -iregex "${FILTER}"`) 	
 	unset $IFS #or IFS=$' \t\n'
 }
 
@@ -33,6 +33,7 @@ while true; do
 	do
 		#Compare directory minus last recorded directory against
 		# filter to add only uniquely rooted file paths
+		shopt -s nocasematch
 		if [[ "${DIR#${LAST_DIRECTORY}}" =~ ${FILTER} ]]
 			then
 			(( i++ ))
