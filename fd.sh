@@ -4,15 +4,21 @@ args=("$@")
 DIRS=()
 FILTER=".*${args[0]}.*"
 
-function likeAncestry() {
-	DIRS+=(`pwd`)
+function likeAncestry () {
+	DIR=$1
+	PARENT_DIRECTORY=`dirname $DIR`
+	if [[ $PARENT_DIRECTORY != $DIR ]]
+	then
+		likeAncestry $PARENT_DIRECTORY
+	fi
+	DIRS+=($1)
 }
 
 function likeDescendants() {
 	DIRS+=(`find . -regextype posix-extended -regex "${FILTER}"`) 	
 }
 
-likeAncestry
+likeAncestry `pwd`
 likeDescendants
 
 while true; do
