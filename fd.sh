@@ -3,7 +3,7 @@
 args=("$@")
 DIRS=()
 FILTER=".*${args[0]}.*" #Use first paramet to create regex filter
-
+ROOT_DIRECTORY="."
 function likeAncestry () {
 	DIR=$1
 	PARENT_DIRECTORY=`dirname $DIR`
@@ -18,11 +18,19 @@ function likeDescendants() {
 	#Unset space as a delimiter, so that find returns paths with
 	# spaces in full.  Then reset that control after execution
 	IFS=$'\t\n'
-	DIRS+=(`find . -regextype posix-extended -iregex "${FILTER}"`) 	
+	DIRS+=(`find ${ROOT_DIRECTORY} -regextype posix-extended -iregex "${FILTER}"`) 	
 	unset $IFS #or IFS=$' \t\n'
 }
 
-likeAncestry `pwd` #Search up current path
+#if second parameter exists, use that as root directory to start search
+#else, default to current directory and also and path ancestry
+if [[ ! -z ${args[1]} ]] 
+then
+	ROOT_DIRECTORY=${args[1]}
+else
+	likeAncestry `pwd` #Search up current path
+fi
+
 likeDescendants
 
 while true; do
@@ -41,7 +49,12 @@ while true; do
 			(( i++ ))
 			echo $i:  ${DIR}
 			FILTERED_DIRS+=(${DIR})
-			LAST_DIRECTORY=${DIR}
+			
+			#Don't record files, only directories
+			if [[ -d ${DIR} ]]
+			then
+				LAST_DIRECTORY=${DIR}
+			fi
 		fi
 	done
 
