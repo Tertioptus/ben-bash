@@ -4,6 +4,9 @@ args=("$@")
 DIRS=()
 FILTER=".*${args[0]}.*" #Use first paramet to create regex filter
 ROOT_DIRECTORY="."
+LAST_DIRECTORY=""
+LAST_FILTER=""
+
 function likeAncestry () {
 	DIR=$1
 	PARENT_DIRECTORY=`dirname $DIR`
@@ -11,13 +14,20 @@ function likeAncestry () {
 	then
 		likeAncestry $PARENT_DIRECTORY
 	fi
-	DIRS+=($1)
+
+	#Only add ancestors if it, minus it's parent directoy, passes criteria
+	if [[ "$1#${LAST_DIRECTORY}" =~ ${FILTER} ]]
+	then
+		LAST_DIRECTORY=$1
+		DIRS+=($1)
+	fi
 }
 
 function likeDescendants() {
 	#Unset space as a delimiter, so that find returns paths with
 	# spaces in full.  Then reset that control after execution
 	IFS=$'\t\n'
+	DIR_COUNT=${#DIRS[@]}
 	DIRS+=(`find ${ROOT_DIRECTORY} -regextype posix-extended -iregex "${FILTER}"`) 	
 	unset $IFS #or IFS=$' \t\n'
 }
@@ -33,43 +43,55 @@ fi
 
 likeDescendants
 
-while true; do
-	let i=0
-	LAST_DIRECTORY=""
-	FILTERED_DIRS=()
-	let current_directory_list_count=0
-	for DIR in ${DIRS[@]}
-	do
-		#Compare directory minus last recorded directory against
-		# filter to add only uniquely rooted file paths
-		shopt -s nocasematch
-		(( current_directory_list_count++ ))
-		if [[ "${current_directory_list_count}: ${DIR#${LAST_DIRECTORY}}" =~ ${FILTER} ]]
-			then
-			(( i++ ))
-			echo $i:  ${DIR}
-			FILTERED_DIRS+=(${DIR})
-			
-			#Don't record files, only directories
-			if [[ -d ${DIR} ]]
-			then
-				LAST_DIRECTORY=${DIR}
+if (( ${#DIRS[@]} == 0 ))
+then
+	echo "No results please try again with another query."
+else
+	while true; do
+		let i=0
+		FILTERED_DIRS=()
+		let current_directory_list_count=0
+		for DIR in ${DIRS[@]}
+		do
+			#Compare directory minus last recorded directory against
+			# filter to add only uniquely rooted file paths
+			shopt -s nocasematch
+			(( current_directory_list_count++ ))
+			if [[ "${current_directory_list_count}: ${DIR#${LAST_DIRECTORY}}" =~ ${FILTER} ]]
+				then
+				(( i++ ))
+				echo $i:  ${DIR}
+				FILTERED_DIRS+=(${DIR})
+				
+				#Don't record files, only directories
+				if [[ -d ${DIR} ]]
+				then
+					LAST_DIRECTORY=${DIR}
+				fi
 			fi
+		done
+
+		if [[ $i == 1 ]]
+			then
+				#Check if lone path is a directory or file
+				if [[ -d ${FILTERED_DIRS[0]} ]]
+					then
+						cd ${FILTERED_DIRS[0]}
+					else
+						#If file, change to parent directory
+						cd `dirname ${FILTERED_DIRS[0]}`
+				fi
+				break	
+		fi
+
+		if [[ $i == 0 ]]
+			then
+				FILTER=${LAST_FILTER}
+				echo "No results.  Try again with previous query."
+			else
+				DIRS=( "${FILTERED_DIRS[@]}" )
+				LAST_FILTER=${FILTER}
+				read FILTER
 		fi
 	done
-
-	if [[ $i == 1 ]]
-		then
-			#Check if lone path is a directory or file
-			if [[ -d ${FILTERED_DIRS[0]} ]]
-				then
-					cd ${FILTERED_DIRS[0]}
-				else
-					#If file, change to parent directory
-					cd `dirname ${FILTERED_DIRS[0]}`
-			fi
-			break	
-	fi
-	DIRS=( "${FILTERED_DIRS[@]}" )
-	read FILTER
-done
+fi
