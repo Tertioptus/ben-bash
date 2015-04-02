@@ -55,8 +55,8 @@ else
 		do
 			#Compare directory minus last recorded directory against
 			# filter to add only uniquely rooted file paths
-			shopt -s nocasematch
 			(( current_directory_list_count++ ))
+			shopt -s nocasematch
 			if [[ "${current_directory_list_count}: ${DIR#${LAST_DIRECTORY}}" =~ ${FILTER} ]]
 				then
 				(( i++ ))
