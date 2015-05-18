@@ -9,7 +9,7 @@ install:
 	mkdir -p $(INSTALL_DIR)
 	cp $(FILE_NAME) $(INSTALL_DIR)
 	echo "# benbash             #" >> ~/.bashrc
-	echo "alias bb=\". ~/.local/bin/benbash.sh\"" >> ~/.bashrc
+	echo "alias bb=\". $(INSTALL_DIR)/benbash.sh\"" >> ~/.bashrc
 	echo "# benbash END #" >> ~/.bashrc
 	exec bash
 	@echo ''
