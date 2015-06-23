@@ -23,3 +23,33 @@
 	1: ./Makefile
 	~/ben-bash$	
     
+    	~/Documents$ bb efin
+	1: ./eFind
+	2: ./eFind/backlog - efind.gsheet
+	3: ./eFind/eFind site search memory optimization.gdoc
+	2
+	1: ./eFind/backlog - efind.gsheet
+	~/Documents/eFind$
+	
+	~/Documents$ bb zooms
+	1: ./eFind/stories/User zooms the map to a place, based on place name, using _zoom to_ map tool_
+	2: ./eFind/stories/User zooms the map to a Site, based on site name and_or ID, using _zoom to_ map tool_
+	3: ./eFind/stories/User zooms the map to an address using the _zoom to_ map tool_
+	4: ./eFind/stories/User zooms to ground level
+	5: ./eFind/stories/User zooms to ground level/ad User zooms to ground level.gdraw
+	6: ./eFind/stories/User zooms to ground level/journal User zooms to ground level.gdoc
+	7: ./eFind/stories/User zooms to ground level/sd User zooms to ground level.gdraw
+	8: ./eFind/stories/User zooms to ground level/tasks_ User zooms to ground level.gsheet
+	ground
+	1: ./eFind/stories/User zooms to ground level/ad User zooms to ground level.gdraw
+	2: ./eFind/stories/User zooms to ground level/journal User zooms to ground level.gdoc
+	3: ./eFind/stories/User zooms to ground level/sd User zooms to ground level.gdraw
+	4: ./eFind/stories/User zooms to ground level/tasks_ User zooms to ground level.gsheet
+	3
+	1: ./eFind/stories/User zooms to ground level/sd User zooms to ground level.gdraw
+	~/Documents/eFind/stories/User zooms to ground level$
+
+
+	
+
+
