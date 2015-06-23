@@ -6,6 +6,17 @@ FILTER=".*${args[0]}.*" #Use first paramet to create regex filter
 ROOT_DIRECTORY="."
 LAST_DIRECTORY=""
 LAST_FILTER=""
+DEPTH=false
+
+function setArgumentDepth() {
+	if [[ ${args[$1]} =~ ^[0-9]+$ ]]
+	then 
+		DEPTH=${args[$1]}
+	fi
+}
+
+setArgumentDepth 1
+setArgumentDepth 2
 
 function likeAncestry () {
 	DIR=$1
@@ -28,7 +39,12 @@ function likeDescendants() {
 	# spaces in full.  Then reset that control after execution
 	IFS=$'\t\n'
 	DIR_COUNT=${#DIRS[@]}
-	DIRS+=(`find ${ROOT_DIRECTORY} -regextype posix-extended -iregex "${FILTER}"`) 	
+	if [[ ! ${DEPTH} == false ]]
+	then
+		DIRS+=(`find ${ROOT_DIRECTORY} -maxdepth $DEPTH -regextype posix-extended -iregex "${FILTER}"`) 	
+	else
+		DIRS+=(`find ${ROOT_DIRECTORY} -regextype posix-extended -iregex "${FILTER}"`) 	
+	fi
 	unset $IFS #or IFS=$' \t\n'
 }
 
@@ -36,7 +52,10 @@ function likeDescendants() {
 #else, default to current directory and also and path ancestry
 if [[ ! -z ${args[1]} ]] 
 then
-	ROOT_DIRECTORY=${args[1]}
+	if [[ ${DEPTH} == false ]]
+	then
+		ROOT_DIRECTORY=${args[1]}
+	fi
 else
 	likeAncestry `pwd` #Search up current path
 fi
