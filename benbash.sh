@@ -111,6 +111,11 @@ else
 				DIRS=( "${FILTERED_DIRS[@]}" )
 				LAST_FILTER=${FILTER}
 				read FILTER
+
+				if [[ $FILTER =~ ^[0-9]+:$ ]]
+				then
+					FILTER="^$FILTER"
+				fi
 		fi
 	done
 fi
