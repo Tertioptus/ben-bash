@@ -1,24 +1,21 @@
-FILE_NAME=benbash.sh
-
 all:
 	@echo "Please run 'make install'"
 
 install:
 	@echo ""
-	mkdir -p $(INSTALL_DIR)
-	cp $(FILE_NAME) $(INSTALL_DIR)
-	echo "# benbash             #" >> ~/.bashrc
-	echo "alias bb=\". $(INSTALL_DIR)/benbash.sh\"" >> ~/.bashrc
-	echo "forest" >> ~/.bashrc
-	echo "mcd" >> ~/.bashrc
-	echo "# benbash END #" >> ~/.bashrc
+	echo "# bb-accessories             #" >> ~/.bashrc
+	echo "alias forest=\"tree -L 3\"" >> ~/.bashrc
+	echo "function mcd"
+	echo "{"
+	echo "	command mkdir $1 && $2"
+	echo "}"
+	echo "# bb-accessories END #" >> ~/.bashrc
 	exec bash
 	@echo ''
 	@echo 'USAGE:'
 	@echo '------'
 
 uninstall:
-	rm $(INSTALL_DIR)/$(FILE_NAME)
-	sed -i '/benbash/ d' ~/.bashrc
+	sed -i '/bb-accessories/ d' ~/.bashrc
 
 .PHONY: all install
