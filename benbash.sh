@@ -41,9 +41,9 @@ function likeDescendants() {
 	DIR_COUNT=${#DIRS[@]}
 	if [[ ! ${DEPTH} == false ]]
 	then
-		DIRS+=(`find ${ROOT_DIRECTORY} -maxdepth $DEPTH -regextype posix-extended -iregex "${FILTER}"`) 	
+		DIRS+=(`find ${ROOT_DIRECTORY} -maxdepth $DEPTH -regextype posix-extended -iregex "${FILTER}"|sort`) 	
 	else
-		DIRS+=(`find ${ROOT_DIRECTORY} -regextype posix-extended -iregex "${FILTER}"`) 	
+		DIRS+=(`find ${ROOT_DIRECTORY} -regextype posix-extended -iregex "${FILTER}"|sort`) 	
 	fi
 	unset $IFS #or IFS=$' \t\n'
 }
