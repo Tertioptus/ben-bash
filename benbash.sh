@@ -95,10 +95,10 @@ else
 				#Check if lone path is a directory or file
 				if [[ -d ${FILTERED_DIRS[0]} ]]
 					then
-						cd ${FILTERED_DIRS[0]}
+						cd -P ${FILTERED_DIRS[0]}
 					else
 						#If file, change to parent directory
-						cd `dirname ${FILTERED_DIRS[0]}`
+						cd -P `dirname ${FILTERED_DIRS[0]}`
 				fi
 				break	
 		fi
