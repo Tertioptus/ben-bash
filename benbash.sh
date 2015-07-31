@@ -76,10 +76,10 @@ else
 			# filter to add only uniquely rooted file paths
 			(( current_directory_list_count++ ))
 			shopt -s nocasematch
-			if [[ "${current_directory_list_count}: ${DIR#${LAST_DIRECTORY}}" =~ ${FILTER} ]]
+			if [[ "`printf '%02d' ${current_directory_list_count}`: ${DIR#${LAST_DIRECTORY}}" =~ ${FILTER} ]]
 				then
 				(( i++ ))
-				echo $i:  ${DIR}
+				echo `printf "%02d" $i`: ${DIR}
 				FILTERED_DIRS+=(${DIR})
 				
 				#Don't record files, only directories
