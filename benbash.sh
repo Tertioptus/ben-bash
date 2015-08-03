@@ -62,10 +62,17 @@ fi
 
 likeDescendants
 
-if (( ${#DIRS[@]} == 0 ))
+DIR_COUNT=${#DIRS[@]}
+if (( $DIR_COUNT  == 0 ))
 then
 	echo "No results please try again with another query."
 else
+	if [ $DIR_COUNT -lt 10 ]
+	then
+		ZERO_PADDING="%01d"
+	else
+		ZERO_PADDING="%02d"
+	fi
 	while true; do
 		let i=0
 		FILTERED_DIRS=()
@@ -76,10 +83,10 @@ else
 			# filter to add only uniquely rooted file paths
 			(( current_directory_list_count++ ))
 			shopt -s nocasematch
-			if [[ "`printf '%02d' ${current_directory_list_count}`: ${DIR#${LAST_DIRECTORY}}" =~ ${FILTER} ]]
+			if [[ "`printf $ZERO_PADDING ${current_directory_list_count}`: ${DIR#${LAST_DIRECTORY}}" =~ ${FILTER} ]]
 				then
 				(( i++ ))
-				echo `printf "%02d" $i`: ${DIR}
+				echo `printf $ZERO_PADDING $i`: ${DIR}
 				FILTERED_DIRS+=(${DIR})
 				
 				#Don't record files, only directories
