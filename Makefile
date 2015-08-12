@@ -1,4 +1,4 @@
-INSTALL_DIR=~/.local/bin
+INSTALL_DIR=~/.local/bin/benbash
 FILE_NAME=benbash.sh
 
 all:
@@ -16,8 +16,31 @@ install:
 	@echo 'USAGE:'
 	@echo '------'
 
+install-accessories:
+	@echo ""
+	mkdir -p $(INSTALL_DIR)
+	cp accessories/*.sh $(INSTALL_DIR)
+	echo "# benbash accessories #" >> ~/.bashrc
+	echo "alias delegate=\". $(INSTALL_DIR)/delegate.sh\"" >> ~/.bashrc
+	echo "# benbash END #" >> ~/.bashrc
+	@echo ''
+	@echo 'USAGE:'
+	@echo '------'
+
+install-full:
+	make install-accessories
+	make install
+
+reinstall:
+	make uninstall
+	make install
+
+reinstall-full:
+	make uninstall
+	make install-full
+
 uninstall:
-	rm $(INSTALL_DIR)/$(FILE_NAME)
+	rm -rf $(INSTALL_DIR)
 	sed -i '/benbash/ d' ~/.bashrc
 
 .PHONY: all install
