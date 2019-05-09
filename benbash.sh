@@ -2,11 +2,18 @@
 
 args=("$@")
 DIRS=()
-FILTER=".*${args[0]}.*" #Use first paramet to create regex filter
+IFS=',' read -ra FILTERS <<< "${args[0]}" #Use first paramet to create regex filter
+CURSOR=0
+SIZE=${#FILTERS[@]}
 ROOT_DIRECTORY="."
 LAST_DIRECTORY=""
 LAST_FILTER=""
 DEPTH=false
+
+function pop() {
+	CURSOR=$(( $CURSOR+1 ))
+	FILTER="${FILTERS[$CURSOR]}"
+}
 
 function setArgumentDepth() {
 	if [[ ${args[$1]} =~ ^[0-9]+$ ]]
@@ -41,9 +48,9 @@ function likeDescendants() {
 	DIR_COUNT=${#DIRS[@]}
 	if [[ ! ${DEPTH} == false ]]
 	then
-		DIRS+=(`find ${ROOT_DIRECTORY} -maxdepth $DEPTH -regextype posix-extended -iregex "${FILTER}"|sort`) 	
+		DIRS+=(`find ${ROOT_DIRECTORY} -maxdepth $DEPTH -regextype posix-extended -iregex ".*${FILTER}.*"|sort`) 	
 	else
-		DIRS+=(`find ${ROOT_DIRECTORY} -regextype posix-extended -iregex "${FILTER}"|sort`) 	
+		DIRS+=(`find ${ROOT_DIRECTORY} -regextype posix-extended -iregex ".*${FILTER}.*"|sort`) 	
 	fi
 	unset $IFS #or IFS=$' \t\n'
 }
@@ -60,7 +67,10 @@ else
 	likeAncestry `pwd` #Search up current path
 fi
 
+
 likeDescendants
+
+pop
 
 DIR_COUNT=${#DIRS[@]}
 if (( $DIR_COUNT  == 0 ))
@@ -110,19 +120,31 @@ else
 				break	
 		fi
 
+
+
 		if [[ $i == 0 ]]
 			then
 				FILTER=${LAST_FILTER}
-				echo "No results.  Try again with previous query."
+				if [[ $CURSOR -ge $SIZE ]] #Filters not empty
+					then
+						echo "No results.  Try again with previous query."
+				fi
 			else
 				DIRS=( "${FILTERED_DIRS[@]}" )
 				LAST_FILTER=${FILTER}
-				read FILTER
 
-				if [[ $FILTER =~ ^[0-9]+:$ ]]
-				then
-					FILTER="^$FILTER"
+				if [[ $CURSOR < $SIZE ]] #Filters not empty
+					then
+						pop
+					else	
+						read FILTER
+
+						if [[ $FILTER =~ ^[0-9]+:$ ]]
+							then
+								FILTER="^$FILTER"
+						fi
 				fi
+
 		fi
 	done
 fi
