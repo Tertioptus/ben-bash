@@ -3,16 +3,17 @@
 args=("$@")
 DIRS=()
 IFS=',' read -ra FILTERS <<< "${args[0]}" #Use first paramet to create regex filter
-CURSOR=0
+CURSOR=1
 SIZE=${#FILTERS[@]}
 ROOT_DIRECTORY="."
 LAST_DIRECTORY=""
 LAST_FILTER=""
 DEPTH=false
+FILTER=".*${FILTERS[0]}.*"
 
 function pop() {
+	FILTER=".*${FILTERS[$CURSOR]}.*"
 	CURSOR=$(( $CURSOR+1 ))
-	FILTER="${FILTERS[$CURSOR]}"
 }
 
 function setArgumentDepth() {
@@ -34,7 +35,7 @@ function likeAncestry () {
 	fi
 
 	#Only add ancestors if it, minus it's parent directoy, passes criteria
-	if [[ "$1#${LAST_DIRECTORY}" =~ ${FILTER} ]]
+	if [[ "$1#${LAST_DIRECTORY}" =~ $FILTER ]]
 	then
 		LAST_DIRECTORY=$1
 		DIRS+=($1)
@@ -48,9 +49,9 @@ function likeDescendants() {
 	DIR_COUNT=${#DIRS[@]}
 	if [[ ! ${DEPTH} == false ]]
 	then
-		DIRS+=(`find ${ROOT_DIRECTORY} -maxdepth $DEPTH -regextype posix-extended -iregex ".*${FILTER}.*"|sort`) 	
+		DIRS+=(`find ${ROOT_DIRECTORY} -maxdepth $DEPTH -regextype posix-extended -iregex $FILTER|sort`) 	
 	else
-		DIRS+=(`find ${ROOT_DIRECTORY} -regextype posix-extended -iregex ".*${FILTER}.*"|sort`) 	
+		DIRS+=(`find ${ROOT_DIRECTORY} -regextype posix-extended -iregex $FILTER|sort`) 	
 	fi
 	unset $IFS #or IFS=$' \t\n'
 }
@@ -69,8 +70,6 @@ fi
 
 
 likeDescendants
-
-pop
 
 DIR_COUNT=${#DIRS[@]}
 if (( $DIR_COUNT  == 0 ))
@@ -93,10 +92,18 @@ else
 			# filter to add only uniquely rooted file paths
 			(( current_directory_list_count++ ))
 			shopt -s nocasematch
+			
 			if [[ "`printf $ZERO_PADDING ${current_directory_list_count}`: ${DIR#${LAST_DIRECTORY}}" =~ ${FILTER} ]]
 				then
 				(( i++ ))
-				echo `printf $ZERO_PADDING $i`: ${DIR}
+				
+				if [[ $CURSOR -ge $SIZE ]] #Filters not empty
+					then
+						echo `printf $ZERO_PADDING $i`: ${DIR}
+					else
+						echo -ne .
+				fi
+
 				FILTERED_DIRS+=(${DIR})
 				
 				#Don't record files, only directories
@@ -106,6 +113,9 @@ else
 				fi
 			fi
 		done
+
+		LAST_DIRECTORY=""
+		echo
 
 		if [[ $i == 1 ]]
 			then
@@ -121,12 +131,11 @@ else
 		fi
 
 
-
 		if [[ $i == 0 ]]
 			then
-				FILTER=${LAST_FILTER}
 				if [[ $CURSOR -ge $SIZE ]] #Filters not empty
 					then
+						FILTER=${LAST_FILTER}
 						echo "No results.  Try again with previous query."
 				fi
 			else
